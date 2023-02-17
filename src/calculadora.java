@@ -1,5 +1,5 @@
 import java.util.Arrays;
-import java.util.Scanner; 
+import java.util.Scanner;
 public class calculadora {
 
 	public static void main(String[] args) {
@@ -9,63 +9,38 @@ public class calculadora {
 		
 		//revisa si hay 1 y solo 1 signo en la string, * y x simbolizan una multiplicacion
 		while(!repetir) {
-			System.out.println("Ingrese la expresion que desea");
+			System.out.print("Ingrese la expresion que desea -> ");
 			StringToOperate = expresion.nextLine().replaceAll("\\s", "").toLowerCase();  
 			repetir = CheckValidOperation(StringToOperate);
-			System.out.println("Valor es " + repetir);
 		}	
-		System.out.println("Aqui va la suma");
-		/*
-		 * TODO
-		 * -Pedirle al usuario que agregue los valores
-		 * -mediante un string se guardara la expresion del usuario 
-		 * -remover los espacios en el string
-		 * -dividir la expresion en 2 partes, siguendo este order: suma, resta, multiplicacion, division
-		 * -ver si contiene una suma, o resta: entrara en una funcion que tomara como parametro el operador y luego entrara a la lista de strings y va a intentar ver si hay alguna multiplicaion o  division 
-		 * 
-		 * 
-		 * -exception when division by 0
-		 * */
+		double Respuesta = OperacionDeDosDigitos(StringToOperate);
+		printAnswer(Respuesta);
 	}
 	
 	
 	public static boolean CheckValidOperation(String Operacion) {
 		//boolean isValid = true; 
 		int contador = 0; 
-		String Operador = null; 
-		String[] SignosDeOperacion = {"-", "+", "*", "x", "/"};
-		for(String Signo : SignosDeOperacion) {
-			
-			if(Operacion.contains(Signo)) {
-				//System.out.println("Entro aqui");
-				contador++; 
-				Operador = Signo;
-				if(Operacion.indexOf(Signo) != Operacion.lastIndexOf(Signo)) {
-					contador++; 
-				}
-			} 
-		}
-		System.out.println(contador); 
-		//Este condicional revisa si existe un signo para operar
-		if(contador !=1) {
+		String Operador = getOperador(Operacion);
+		System.out.println(Operador);
+		//TODO:: - o + tira este error, pero no tiene que ser asi porque puede que se quiera el primero como negativo y lo demas una suma o multiplicacion
+		if(Operacion.indexOf(Operador) != Operacion.lastIndexOf(Operador) || Operador.equals("-1")) {
 			System.out.println("Ingreso ninguno o pocos signos");
-			return false; 
+			return false;
 		}
+
 		//Este condicional revisa si el operador esta en la primera posicion o si esta en la ultima
 		if(Operacion.indexOf(Operador) == 0 || Operacion.indexOf(Operador) == Operacion.length()){
 			System.out.println("No es posible ingresar ya que \'" + Operador + "\' esta en la posicion 1 o en la ultima posicion" );
 			return false; 
 		}
 		//Este condicional revisa si hay solo numero a excepcion de x (multiplicar) y d (que este tambien puede servir para double)
-		String[] ValoresAceptados = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "x", "d", "."};
+		String[] ValoresAceptados = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "x", "d", ".", "-", "+"};
 		boolean isSame = false; 
 		for(int i = 0; i < Operacion.length(); i++) {
 			isSame = false; 
 			String Numero = Character.toString(Operacion.charAt(i));
 			for(String Valor : ValoresAceptados) {
-				//System.out.println("--valor es " + Valor + " Numero es " + Numero);
-				//System.out.println(Valor.equals(Numero) || Numero.equals(Operador));
-				//System.out.println("Valor de Operador " + Operador);
 				if(Valor.equals(Numero) || Numero.equals(Operador)) {
 					isSame = true; 
 				}
@@ -108,22 +83,90 @@ public class calculadora {
 			}
 			
 		}
-		
 		//este condicional va a revisar que valores como ".d" se puedan agregar
-		
-		
+		/*
+		 * Si la diferencia entre el primer digito y el operador es de 2, y los valores que estan son .d o d. entonces false
+		 * si la diferencia entre el operador y le ultimo valor es de 2, y los valores que estan son .d o d. entonces false
+		 * de lo contrario va a ser true
+		 * */
+		if(Operacion.contains("d.")){
+			System.out.println("Se ingreso \"d.\"");
+			return false;
+		}
+		if(Operacion.indexOf(".d") == 0 || (Operacion.indexOf(Operador)+1) == Operacion.indexOf(".d")){
+			System.out.println("Se ingreso \".d\" como valor, esto es incorrecto");
+			return false;
+		}
 		return true; 
 	}
 	
-	public static boolean isValueContained() {
-		return false; 
+	public static String getOperador(String Operacion){
+		String operador = null;
+		String[] SignosDeOperacion = {"-", "+", "*", "x", "/"};
+		for(String Signo : SignosDeOperacion) {
+			System.out.println(Signo);
+			System.out.println(Operacion.contains(Signo));
+			if(Operacion.contains(Signo)) {
+				operador = Signo;
+			}
+		}
+		if(operador == null) operador = "-1";
+		if(operador.equals("x")) operador = "*";
+		return operador;
 	}
-	
-	
 	public static double OperacionDeDosDigitos(String Operacion) {
-		double respuesta = 0; 
-		
+		double respuesta = 0;
+		String[] ValoresDeOperacion;
+		try{
+			String operador = getOperador(Operacion);
+			if(operador.equals("*")) operador = "\\*";
+			if(operador.equals("+")) operador = "\\+";
+			System.out.println("Este es el operador " + operador);
+			ValoresDeOperacion = Operacion.split(operador);
+			double valor1, valor2;
+			switch (operador){
+				case "\\*":
+					valor1 = Double.parseDouble(ValoresDeOperacion[0]);
+					valor2 = Double.parseDouble(ValoresDeOperacion[1]);
+					return valor1 * valor2;
+				case "\\+":
+					valor1 = Double.parseDouble(ValoresDeOperacion[0]);
+					valor2 = Double.parseDouble(ValoresDeOperacion[1]);
+					return valor1 + valor2;
+				case "-":
+					valor1 = Double.parseDouble(ValoresDeOperacion[0]);
+					valor2 = Double.parseDouble(ValoresDeOperacion[1]);
+					return valor1 - valor2;
+				case "/":
+					valor1 = Double.parseDouble(ValoresDeOperacion[0]);
+					valor2 = Double.parseDouble(ValoresDeOperacion[1]);
+					if(valor2 == 0.0)System.out.println("La division entre 0 esta indefinida ojito con eso :)");
+					return valor1 / valor2;
+			}
+		}
+		catch(Exception e){
+			System.out.println(e.toString());
+			System.out.println("Ocurrio un error, comunicarse con el desarrollador");
+			return 0.0;
+		}
 		return respuesta; 
 	}
 
+
+	public static void printAnswer(double respuesta){
+		// para print "* Respuesta->" se ocupan 14 *
+		String ResEnString = Double.toString(respuesta);
+		int cantidadAsteriscos = ResEnString.length();
+		System.out.println();
+		System.out.print("****************");
+		for(int i = 0; i < cantidadAsteriscos; i++){
+			System.out.print("*");
+		}
+		System.out.println();
+		System.out.println("* Respuesta-> " + ResEnString + " *");
+		System.out.print("****************");
+		for(int i = 0; i < cantidadAsteriscos; i++){
+			System.out.print("*");
+		}
+	}
 }
