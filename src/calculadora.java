@@ -1,29 +1,69 @@
 import java.util.Arrays;
 import java.util.Scanner;
 public class calculadora {
-
+	//TAREAS TAMBIEN PUEDEN SER ENCONTRADAS EN: https://github.com/aaroncba/UNAH_TAREAS
 	public static void main(String[] args) {
-		Scanner expresion = new Scanner(System.in);
-		boolean repetir = false; 
-		String StringToOperate = null; 
-		
-		//revisa si hay 1 y solo 1 signo en la string, * y x simbolizan una multiplicacion
-		while(!repetir) {
-			System.out.print("Ingrese la expresion que desea -> ");
-			StringToOperate = expresion.nextLine().replaceAll("\\s", "").toLowerCase();  
-			repetir = CheckValidOperation(StringToOperate);
-		}	
-		double Respuesta = OperacionDeDosDigitos(StringToOperate);
-		printAnswer(Respuesta);
+		StartOperation(); 
 	}
 	
+	public static void StartOperation() {
+		Scanner input = new Scanner(System.in); 
+		Scanner Sinput = new Scanner(System.in); 
+		boolean start = true; 
+		int option = 0;
+		
+		do {
+			PrintMenu(); 
+			try {
+				
+				option = input.nextInt(); 
+			}catch(Exception e) {
+
+				input.nextLine();
+			}
+			switch(option) {
+			case 1: 
+				String[] errors = {"Estas son las restricciones de la calculadora: ", "Es posible agregar una \"d\" al final de un numero decimal.", "No es posible hacer que un numero sea negativo, agregar \"-\" al prinicipio de un numero y luego agregar un operador causara un error.", 
+						"Ingresar letras va a causar un error.", "Agregar \".d\" va a causar un error"}; 
+				for(String error : errors) {
+					System.out.println("->" + error);
+				}
+				break;
+			case 2: 
+				System.out.print("Ingrese la expresion que desea -> ");
+				input.reset();
+				String StringToOperate = Sinput.nextLine().replaceAll("\\s", "").toLowerCase();  
+				boolean repetir = CheckValidOperation(StringToOperate);
+				if(repetir) {
+					double Respuesta = OperacionDeDosDigitos(StringToOperate);
+					printAnswer(Respuesta);
+				}
+				break; 
+			case 3: 
+				System.out.println("Saliendo... Un placer ayudarte ;)");
+				start = false; 
+				break; 
+			default: 
+				System.out.println("El valor ingresado es incorrecto, ingrese un valor correcto para el menu.");
+				break; 
+			}
+		}while(start);
+		
+	}
+	
+	public static void PrintMenu() {
+		System.out.println(); 
+		System.out.println("CALCULADORA DE 2 DIGITOS A PARTIR DE UN STRING");
+		System.out.println("Menu: ");
+		System.out.println("1. Restricciones y uso de la calculadora"); 
+		System.out.println("2. Calcular");
+		System.out.println("3. Salir"); 
+	}
 	
 	public static boolean CheckValidOperation(String Operacion) {
 		//boolean isValid = true; 
 		int contador = 0; 
 		String Operador = getOperador(Operacion);
-		System.out.println(Operador);
-		//TODO:: - o + tira este error, pero no tiene que ser asi porque puede que se quiera el primero como negativo y lo demas una suma o multiplicacion
 		if(Operacion.indexOf(Operador) != Operacion.lastIndexOf(Operador) || Operador.equals("-1")) {
 			System.out.println("Ingreso ninguno o pocos signos");
 			return false;
@@ -54,7 +94,6 @@ public class calculadora {
 		//Esta condicional va a revisar si el primer valor y el valor que sigue despues del operador es un punto y que solo se contengan 2 puntos.
 		
 		if(Operacion.contains(".")){
-			System.out.println("Entering here...");
 			if(Operacion.indexOf(".") != Operacion.lastIndexOf(".")) {
 				String dotContained = Operacion.substring(Operacion.indexOf(".") + 1,  Operacion.lastIndexOf("."));
 				if(dotContained.contains(".")) {
@@ -66,8 +105,6 @@ public class calculadora {
 					return false; 
 				}
 			}
-			System.out.println(Operacion.indexOf(Operador));
-			System.out.println(Operacion.indexOf("."));
 			if(Operacion.indexOf(".") == 0 && Operacion.indexOf(Operador) == 1) {
 				System.out.println("Se ingreso un punto como valor");
 				return false; 
@@ -104,8 +141,6 @@ public class calculadora {
 		String operador = null;
 		String[] SignosDeOperacion = {"-", "+", "*", "x", "/"};
 		for(String Signo : SignosDeOperacion) {
-			System.out.println(Signo);
-			System.out.println(Operacion.contains(Signo));
 			if(Operacion.contains(Signo)) {
 				operador = Signo;
 			}
