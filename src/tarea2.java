@@ -1,7 +1,76 @@
 import java.util.Scanner;
 public class tarea2{
+    /**
+     * PROYECTO EN GITHUB:
+     * https://github.com/aaroncba/UNAH_TAREAS/tree/main/src
+     * AARON ISAAC COLINDRES BARRALAGA
+     * #20221002478
+     */
+
     public static void main(String[] args) {
-        triangulo('0', 15);
+        menu();
+    }
+
+    //este es el menu de opciones, donde el usuario puede elegir el metodo que quiera usar.
+    public static void menu(){
+        System.out.println("Tarea #2");
+        Scanner input = new Scanner(System.in);
+        String[] menu = {"MENU", "1)FUNCION Collatz", "2)FUNCION Parrafo", "3)FUNCION Triangulo", "4) Salir", "Ingrese un numero entre 1 y 4"};
+        int opcion = 0;
+        do{
+             for(String toPrint : menu){
+                 System.out.println(toPrint);
+            }
+
+            try{
+                opcion = input.nextInt();
+                try {
+                    switch (opcion) {
+                        case 1 -> {
+                            System.out.println("FUNCION 3n+1 O FUNCION COLLATZ");
+                            collatz();
+                        }
+                        case 2 -> {
+                            System.out.println("FUNCION PARRAFO");
+                            input.nextLine();
+                            System.out.println("Ingrese el margen que desea para la frase: ");
+                            int margen = input.nextInt();
+                            input.nextLine();
+                            System.out.println("Ingrese la frase que desea: ");
+                            String frase = input.nextLine();
+                            parrafo(frase, margen);
+                        }
+                        case 3 -> {
+                            System.out.println("FUNCION TRIANGULO");
+                            input.nextLine();
+                            //figura va a tomar el primer valor del String que se le de.
+                            System.out.println("Ingrese un caracter para el triangulo: ");
+                            char figura = input.next().charAt(0);
+                            input.nextLine();
+                            System.out.println("Ingrese la base para el triangulo: ");
+                            int base = input.nextInt();
+                            triangulo(figura, base);
+                        }
+                        case 4 -> System.out.println("SALIENDO");
+                        default ->{
+                            System.out.println("Valor Ingresado fuera de indice. Intente de nuevo, ingrese un numero entre 1 y 4");
+                            System.out.println();
+                            System.out.println();
+                        }
+                    }
+                } catch (Exception e){
+                    System.out.println("ERROR: Ingrese un valor, valido...");
+                }
+            }catch(Exception e){
+                opcion = 0;
+                input.nextLine();
+                System.out.println("ERROR: Ingrese un valor valido");
+                System.out.println();
+                System.out.println();
+            }
+
+        }while(opcion != 4);
+        input.close();
     }
 
     //3n+1 function || Collatz Function
@@ -12,26 +81,29 @@ public class tarea2{
     * hacer ciclo hasta llegar a 0
     * */
     public static void collatz(){
-        Scanner input = new Scanner (System.in);
+        System.out.println("RESTRICCION: Si la ejecucion del codigo acaba en un numero negativo es por la siguiente razon: ");
+        System.out.println("Durante la ejecucion del codigo uno de los valores supero el limite de int que es -> " + Integer.MAX_VALUE +
+                " esto ocasiona que se empiece desde el punto menor de int que seria -> " + (-Integer.MAX_VALUE) + "\n \n");
+        Scanner inputC = new Scanner (System.in);
         int value = 0;
         boolean exit = false;
         //revisa si el valor ingresado es un numero positivo
         while(!exit){
             try{
                 System.out.println("Ingrese un numero para operarlo: ");
-                value = input.nextInt();
+                value = inputC.nextInt();
                 if(value > 0) {
                     exit = true;
                 }else{
                     System.out.println("Ingrese un valor que este entre 1 e infinito positivo");
                 }
             }catch (Exception e){
-                System.out.println("Ingrese un valor valido");
-                input.nextLine();
+                System.out.println("ERROR: Ingrese un valor valido");
+                inputC.nextLine();
             }
         }
         System.out.print(value);
-        while(1 != value){
+        while(1 != value && -5 != value ){
             if(value % 2 == 0){
                 value = value / 2;
             }else{
@@ -39,7 +111,7 @@ public class tarea2{
             }
             System.out.print(", " + value);
         }
-        input.close();
+        System.out.println();
     }
 
 
@@ -83,6 +155,9 @@ public class tarea2{
     * Se estara repitiendo esto hasta llegar a 0
     * */
     public static void triangulo(char figura, int base){
+        if(base == 0){
+            System.out.println("NO VALIDO: La base tiene que ser mayor de 0");
+        }
         for(int i = 0; i < base; i++){
             for(int a = 0; a < base - (base - i); a++){
                 System.out.print(" ");
@@ -94,3 +169,5 @@ public class tarea2{
         }
     }
 }
+
+
